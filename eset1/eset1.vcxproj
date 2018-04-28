@@ -147,11 +147,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Argument.h" />
+    <ClInclude Include="BitStream.h" />
+    <ClInclude Include="common.h" />
+    <ClInclude Include="Evm.h" />
+    <ClInclude Include="Operation.h" />
+    <ClInclude Include="OperationFactory.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="ThreadContext.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Argument.cpp" />
+    <ClCompile Include="BitStream.cpp" />
     <ClCompile Include="eset1.cpp" />
+    <ClCompile Include="Evm.cpp" />
+    <ClCompile Include="OperationFactory.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
