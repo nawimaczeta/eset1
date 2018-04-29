@@ -61,4 +61,39 @@ private:
 	static const uint8_t _OPCODE = 0x00u;
 };
 
+/*
+Factory that makes LoadConstOperation objects
+*/
+struct LoadConstOperationFactory : IOperationFactory {
+	using IOperationFactory::IOperationFactory;
+
+	virtual OperationPtr build(uint8_t opcode, BitStream & bs);
+private:
+	static const uint8_t _MASK = 0x38u;
+	static const uint8_t _OPCODE = 0x08u;
+};
+
+/*
+Factory that makes MathOperation objects. Detect math operation from opcode and create correct
+MathOperation class
+*/
+struct MathOperationFactory : IOperationFactory {
+	using IOperationFactory::IOperationFactory;
+
+	virtual OperationPtr build(uint8_t opcode, BitStream & bs);
+private:
+	static const uint8_t _MATH_OPCODE_MASK = 0x3f;
+	static const uint8_t _ADD_OPCODE = 0x11u;
+	static const uint8_t _SUB_OPCODE = 0x12u;
+	static const uint8_t _DIV_OPCODE = 0x13u;
+	static const uint8_t _MOD_OPCODE = 0x14u;
+	static const uint8_t _MUL_OPCODE = 0x15u;
+
+	// TODO: compare on signed or unsigned values?
+	static const uint8_t _COMPARE_OPCODE_MASK = 0x3e;
+	static const uint8_t _COMPARE_OPCODE = 0x18u;
+
+	OperationPtr _makeMathExpression(BitStream & bs, function<int64_t(int64_t, int64_t)> mathOperation) const;
+};
+
 OperationPtr makeOperation(uint8_t opcode, BitStream & bs);

@@ -9,8 +9,8 @@ OperationPtr MovOperationFactory::build(uint8_t opcode, BitStream & bs)
 		auto offset = bs.position();
 		bs.pop(3);
 
-		auto arg1 = makeArgument(bs);
-		auto arg2 = makeArgument(bs);
+		auto arg1 = EvmArgument::getArgument(bs);
+		auto arg2 = EvmArgument::getArgument(bs);
 
 		auto operation = make_unique<MovOperation>(offset, arg1, arg2);
 		return move(operation);
@@ -20,11 +20,83 @@ OperationPtr MovOperationFactory::build(uint8_t opcode, BitStream & bs)
 	}
 }
 
+OperationPtr LoadConstOperationFactory::build(uint8_t opcode, BitStream & bs)
+{
+	uint32_t maskedOpcode = opcode & _MASK;
+	if (maskedOpcode == _OPCODE) {
+		auto offset = bs.position();
+		bs.pop(3);
+
+		auto constant = EvmArgument::getConstant(bs);
+		auto arg1 = EvmArgument::getArgument(bs);
+
+		auto operation = make_unique<LoadConstOperation>(offset, constant, arg1);
+		return move(operation);
+	}
+	else {
+		return IOperationFactory::build(opcode, bs);
+	}
+}
+
+OperationPtr MathOperationFactory::build(uint8_t opcode, BitStream & bs)
+{
+	uint32_t maskedOpcode = opcode & _MATH_OPCODE_MASK;
+
+	// detect math operation opcode
+	switch (maskedOpcode) {
+	case _ADD_OPCODE:
+		return _makeMathExpression(bs, [](int64_t a, int64_t b) {return a + b; });
+		break;
+	case _SUB_OPCODE:
+		return _makeMathExpression(bs, [](int64_t a, int64_t b) {return a - b; });
+		break;
+	case _DIV_OPCODE:
+		return _makeMathExpression(bs, [](int64_t a, int64_t b) {return a / b; });
+		break;
+	case _MOD_OPCODE:
+		return _makeMathExpression(bs, [](int64_t a, int64_t b) {return a % b; });
+		break;
+	case _MUL_OPCODE:
+		return _makeMathExpression(bs, [](int64_t a, int64_t b) {return a * b; });
+		break;
+	}
+
+	// detect compare opcode. Compare operation can be implemented as MathOperation object
+	uint32_t compareMaskedOpcode = opcode & _COMPARE_OPCODE_MASK;
+	if (compareMaskedOpcode == _COMPARE_OPCODE) {
+		return _makeMathExpression(bs, [](int64_t a, int64_t b) {
+			if (a < b) return -1;
+			else if (a == b) return 0;
+			else return 1;
+		});
+	}
+
+	return IOperationFactory::build(opcode, bs);
+}
+
+OperationPtr MathOperationFactory::_makeMathExpression(BitStream & bs, function<int64_t(int64_t, int64_t)> mathOperation) const
+{
+	auto offset = bs.position();
+	bs.pop(6);
+
+	auto arg1 = EvmArgument::getArgument(bs);
+	auto arg2 = EvmArgument::getArgument(bs);
+	auto arg3 = EvmArgument::getArgument(bs);
+
+	auto operation = make_unique<MathOperation>(offset, arg1, arg2, arg3, mathOperation);
+	return move(operation);
+}
+
 OperationPtr makeOperation(uint8_t opcode, BitStream & bs)
 {
 	// build chain of responsibilities
-	static IOperationFactory::OperationFactoryPtr unsupported = make_unique<UnsupportedOperationFactory>();
-	static IOperationFactory::OperationFactoryPtr handler = make_unique<MovOperationFactory>(move(unsupported));
+	IOperationFactory::OperationFactoryPtr handler = nullptr;
+	handler = make_unique<UnsupportedOperationFactory>(move(handler));
+	handler = make_unique<MovOperationFactory>(move(handler));
+	handler = make_unique<LoadConstOperationFactory>(move(handler));
+	handler = make_unique<MathOperationFactory>(move(handler));
 
 	return handler->build(opcode, bs);
 }
+
+

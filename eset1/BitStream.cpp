@@ -33,7 +33,7 @@ uint64_t BitStream::front(uint32_t numOfBits) const
 }
 
 /*
-Remove numOfBits bits from the top of the stream 
+Remove numOfBits bits from the front of the stream 
 */
 void BitStream::pop(uint32_t numOfBits)
 {
@@ -57,7 +57,7 @@ uint64_t BitStream::position() const
 }
 
 /*
-Return number of bit still available in the stream
+Return number of bit that is still available in the stream
 */
 uint64_t BitStream::bitsLeft() const
 {
