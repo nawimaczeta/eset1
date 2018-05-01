@@ -88,16 +88,34 @@ OperationPtr MathOperationFactory::_makeMathExpression(BitStream & bs, uint32_t 
 	return move(operation);
 }
 
+OperationPtr ConsoleWriteOperationFactory::build(uint8_t opcode, BitStream & bs)
+{
+	uint32_t maskedOpcode = opcode & _MASK;
+	if (maskedOpcode == _OPCODE) {
+		auto offset = bs.position();
+		bs.pop(5);
+
+		auto arg1 = EvmArgument::getArgument(bs);
+
+		auto operation = make_unique<ConsoleWriteOperation>(offset, arg1);
+		return move(operation);
+	}
+	else {
+		return IOperationFactory::build(opcode, bs);
+	}
+}
+
 OperationPtr makeOperation(uint8_t opcode, BitStream & bs)
 {
 	// build chain of responsibilities
 	IOperationFactory::OperationFactoryPtr handler = nullptr;
 	handler = make_unique<UnsupportedOperationFactory>(move(handler));
-	handler = make_unique<MovOperationFactory>(move(handler));
-	handler = make_unique<LoadConstOperationFactory>(move(handler));
+	handler = make_unique<ConsoleWriteOperationFactory>(move(handler));
 	handler = make_unique<MathOperationFactory>(move(handler));
+	handler = make_unique<LoadConstOperationFactory>(move(handler));
+	handler = make_unique<MovOperationFactory>(move(handler));
+	
+	
 
 	return handler->build(opcode, bs);
 }
-
-

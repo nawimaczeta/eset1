@@ -96,4 +96,16 @@ private:
 	OperationPtr _makeMathExpression(BitStream & bs, uint32_t opcodeSize, function<int64_t(int64_t, int64_t)> mathOperation) const;
 };
 
+/*
+Factory that makes MovOperation objects
+*/
+struct ConsoleWriteOperationFactory : IOperationFactory {
+	using IOperationFactory::IOperationFactory;
+
+	virtual OperationPtr build(uint8_t opcode, BitStream & bs);
+private:
+	static const uint8_t _MASK = 0x3eu;
+	static const uint8_t _OPCODE = 0x26u;
+};
+
 OperationPtr makeOperation(uint8_t opcode, BitStream & bs);

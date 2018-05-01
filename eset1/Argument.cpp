@@ -55,4 +55,20 @@ namespace EvmArgument {
 	}
 
 
+	uint64_t RegisterArgument::getValue(ThreadContext & thread) const
+	{
+		return thread.reg(_regIndex);
+	}
+
+	void RegisterArgument::setValue(ThreadContext & thread, uint64_t value)
+	{
+		thread.reg(_regIndex, value);
+	}
+
+	MemoryArgument::MemoryArgument(uint32_t regIndex, AccessSize accessSize) :
+		_regIndex{ regIndex },
+		_accessSize{ accessSize }
+	{
+	}
+
 }

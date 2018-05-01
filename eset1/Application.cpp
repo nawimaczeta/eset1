@@ -11,6 +11,11 @@ Application::Application(Evm::Evm & evm) :
 	_threadList.emplace_back();
 }
 
+Memory & Application::memory()
+{
+	return _memory;
+}
+
 void Application::_loadOperationList(Evm::Evm & evm)
 {
 	BitStream bs{ evm.payload, evm.header.codeSize };

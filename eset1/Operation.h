@@ -88,3 +88,23 @@ private:
 	EvmArgument::IArgument *_arg3;
 	function<int64_t(int64_t, int64_t)> _mathOperation;
 };
+
+struct ConsoleWriteOperation : IOperation {
+	ConsoleWriteOperation(uint32_t offset, EvmArgument::IArgument *arg1) :
+		IOperation{ offset }, _arg1{ arg1 }
+	{}
+
+	~ConsoleWriteOperation() {
+		delete _arg1;
+	}
+
+	virtual void execute(ThreadContext & thread) {
+		uint64_t value = _arg1->getValue(thread);
+		ios_base::fmtflags f(cout.flags());
+		cout << "0x" << setfill('0') << setw(16) << hex << value << "\n";
+		cout.flags(f);
+	}
+
+private:
+	EvmArgument::IArgument * _arg1;
+};
