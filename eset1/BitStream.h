@@ -14,7 +14,7 @@ struct BitStream {
 		_currentBitInByte{0}
 	{}
 
-	uint64_t front(uint32_t numOfBits) const;
+	uint64_t front(uint32_t numOfBits, bool reversed = false) const;
 	void pop(uint32_t numOfBits);
 	uint32_t position() const;
 	uint32_t bitsLeft() const;

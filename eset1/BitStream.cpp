@@ -4,7 +4,7 @@
 /*
 Return numOfBits from the front of the stream. It doesn't remove the bits from the stream
 */
-uint64_t BitStream::front(uint32_t numOfBits) const
+uint64_t BitStream::front(uint32_t numOfBits, bool reversed) const
 {
 	if (numOfBits > 64) throw invalid_argument("numOfBits must be <=64");
 
@@ -23,9 +23,16 @@ uint64_t BitStream::front(uint32_t numOfBits) const
 		}
 
 		uint8_t bitMask = 1 << (7 - currentBit);
-		uint32_t bit = ((byte & bitMask) == 0) ? 0 : 1;
-		res <<= 1;
-		res |= bit;
+		if (reversed) {
+			uint64_t bit = ((byte & bitMask) == 0) ? 0 : 0x8000000000000000u;
+			res >>= 1;
+			res |= bit;
+		}
+		else {
+			uint32_t bit = ((byte & bitMask) == 0) ? 0 : 1;
+			res <<= 1;
+			res |= bit;
+		}
 
 		numOfBits--;
 		currentBit++;

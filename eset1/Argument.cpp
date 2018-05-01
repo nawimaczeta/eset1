@@ -7,6 +7,14 @@ namespace EvmArgument {
 	*/
 	IArgument * getArgument(BitStream & bs)
 	{
+		uint32_t argType = static_cast<uint32_t>(bs.front(1));
+		if (argType == 1) {
+			bs.pop(7);
+		}
+		else {
+			bs.pop(5);
+		}
+
 		return new TmpArgument(12);
 	}
 
@@ -15,7 +23,17 @@ namespace EvmArgument {
 	*/
 	uint64_t getConstant(BitStream & bs)
 	{
-		return uint64_t();
+		if (bs.bitsLeft() < 64) {
+			throw runtime_error("Unexpected end of file while loading constant");
+		}
+
+		uint64_t res = bs.front(64, true);
+		bs.pop(64);
+
+		// TODO
+		// bigEndian(res);
+
+		return res;
 	}
 
 	/*
@@ -23,7 +41,17 @@ namespace EvmArgument {
 	*/
 	uint32_t getAddress(BitStream & bs)
 	{
-		return uint32_t();
+		if (bs.bitsLeft() < 32) {
+			throw runtime_error("Unexpected end of file while loading address");
+		}
+
+		uint32_t res = bs.front(32);
+		bs.pop(32);
+
+		// TODO
+		// bigEndian(res);
+
+		return res;
 	}
 
 
