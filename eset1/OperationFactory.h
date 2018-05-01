@@ -93,7 +93,7 @@ private:
 	static const uint8_t _COMPARE_OPCODE_MASK = 0x3e;
 	static const uint8_t _COMPARE_OPCODE = 0x18u;
 
-	OperationPtr _makeMathExpression(BitStream & bs, function<int64_t(int64_t, int64_t)> mathOperation) const;
+	OperationPtr _makeMathExpression(BitStream & bs, uint32_t opcodeSize, function<int64_t(int64_t, int64_t)> mathOperation) const;
 };
 
 OperationPtr makeOperation(uint8_t opcode, BitStream & bs);

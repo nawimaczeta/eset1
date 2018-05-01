@@ -13,9 +13,9 @@ namespace EvmArgument {
 	/*
 	Acquire constant form the bit stram
 	*/
-	int64_t getConstant(BitStream & bs)
+	uint64_t getConstant(BitStream & bs)
 	{
-		return int64_t();
+		return uint64_t();
 	}
 
 	/*

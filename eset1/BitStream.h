@@ -16,9 +16,10 @@ struct BitStream {
 
 	uint64_t front(uint32_t numOfBits) const;
 	void pop(uint32_t numOfBits);
-	uint64_t position() const;
-	uint64_t bitsLeft() const;
+	uint32_t position() const;
+	uint32_t bitsLeft() const;
 	void rewind();
+	bool eof() const;
 private:
 	Bytes & _bytes;
 	uint32_t _size;

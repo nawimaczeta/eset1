@@ -14,6 +14,8 @@ uint64_t BitStream::front(uint32_t numOfBits) const
 	uint8_t byte = _bytes[currentByte];
 
 	while (numOfBits) {
+		if (eof()) return res;
+
 		if (currentBit > 7) {
 			currentBit = 0;
 			currentByte++;
@@ -38,6 +40,8 @@ Remove numOfBits bits from the front of the stream
 void BitStream::pop(uint32_t numOfBits)
 {
 	while (numOfBits) {
+		if (eof()) return;
+
 		numOfBits--;
 		_currentBitInByte++;
 
@@ -51,7 +55,7 @@ void BitStream::pop(uint32_t numOfBits)
 /*
 Return current position in the stream (in bits)
 */
-uint64_t BitStream::position() const
+uint32_t BitStream::position() const
 {
 	return (8 * _currentByte + _currentBitInByte);
 }
@@ -59,7 +63,7 @@ uint64_t BitStream::position() const
 /*
 Return number of bit that is still available in the stream
 */
-uint64_t BitStream::bitsLeft() const
+uint32_t BitStream::bitsLeft() const
 {
 	return 8 * _size - position();
 }
@@ -71,4 +75,9 @@ void BitStream::rewind()
 {
 	_currentBitInByte = 0;
 	_currentByte = 0;
+}
+
+bool BitStream::eof() const
+{
+	return (bitsLeft() == 0);
 }

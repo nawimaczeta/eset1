@@ -4,21 +4,25 @@
 #include "Argument.h"
 
 struct IOperation {
-	IOperation(uint64_t offset) :
+	IOperation(uint32_t offset) :
 		_offset{offset}
 	{}
 
 	virtual ~IOperation() = default;
 	virtual void execute(ThreadContext & thread) = 0;
 
+	uint32_t offset() const {
+		return _offset;
+	}
+
 private:
-	uint64_t _offset;
+	const uint32_t _offset;
 };
 
 using OperationPtr = unique_ptr<IOperation>;
 
 struct MovOperation : IOperation {
-	MovOperation(uint64_t offset, EvmArgument::IArgument *arg1, EvmArgument::IArgument *arg2) :
+	MovOperation(uint32_t offset, EvmArgument::IArgument *arg1, EvmArgument::IArgument *arg2) :
 		IOperation{offset}, _arg1 { arg1 }, _arg2{ arg2 }
 	{}
 
@@ -37,7 +41,7 @@ private:
 };
 
 struct LoadConstOperation : IOperation {
-	LoadConstOperation(uint64_t offset, int64_t constant, EvmArgument::IArgument *arg1) :
+	LoadConstOperation(uint32_t offset, uint64_t constant, EvmArgument::IArgument *arg1) :
 		IOperation{ offset }, _constant{ constant }, _arg1{ arg1 }
 	{}
 
@@ -50,12 +54,12 @@ struct LoadConstOperation : IOperation {
 	}
 
 private:
-	int64_t _constant;
+	uint64_t _constant;
 	EvmArgument::IArgument * _arg1;
 };
 
 struct MathOperation : IOperation {
-	MathOperation(uint64_t offset, EvmArgument::IArgument *arg1,
+	MathOperation(uint32_t offset, EvmArgument::IArgument *arg1,
 		EvmArgument::IArgument *arg2, EvmArgument::IArgument *arg3, 
 		function<int64_t(int64_t, int64_t)> mathOperation) :
 		IOperation{ offset }, _arg1{ arg1 }, _arg2{ arg2 }, _arg3{ arg3 }

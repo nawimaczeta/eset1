@@ -31,7 +31,7 @@ namespace EvmArgument {
 	};
 
 	IArgument * getArgument(BitStream & bs);
-	int64_t getConstant(BitStream & bs);
+	uint64_t getConstant(BitStream & bs);
 	uint32_t getAddress(BitStream & bs);
 
 }

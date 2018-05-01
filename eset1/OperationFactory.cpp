@@ -45,26 +45,26 @@ OperationPtr MathOperationFactory::build(uint8_t opcode, BitStream & bs)
 	// detect math operation opcode
 	switch (maskedOpcode) {
 	case _ADD_OPCODE:
-		return _makeMathExpression(bs, [](int64_t a, int64_t b) {return a + b; });
+		return _makeMathExpression(bs, 6, [](int64_t a, int64_t b) {return a + b; });
 		break;
 	case _SUB_OPCODE:
-		return _makeMathExpression(bs, [](int64_t a, int64_t b) {return a - b; });
+		return _makeMathExpression(bs, 6, [](int64_t a, int64_t b) {return a - b; });
 		break;
 	case _DIV_OPCODE:
-		return _makeMathExpression(bs, [](int64_t a, int64_t b) {return a / b; });
+		return _makeMathExpression(bs, 6, [](int64_t a, int64_t b) {return a / b; });
 		break;
 	case _MOD_OPCODE:
-		return _makeMathExpression(bs, [](int64_t a, int64_t b) {return a % b; });
+		return _makeMathExpression(bs, 6, [](int64_t a, int64_t b) {return a % b; });
 		break;
 	case _MUL_OPCODE:
-		return _makeMathExpression(bs, [](int64_t a, int64_t b) {return a * b; });
+		return _makeMathExpression(bs, 6, [](int64_t a, int64_t b) {return a * b; });
 		break;
 	}
 
 	// detect compare opcode. Compare operation can be implemented as MathOperation object
 	uint32_t compareMaskedOpcode = opcode & _COMPARE_OPCODE_MASK;
 	if (compareMaskedOpcode == _COMPARE_OPCODE) {
-		return _makeMathExpression(bs, [](int64_t a, int64_t b) {
+		return _makeMathExpression(bs, 5, [](int64_t a, int64_t b) {
 			if (a < b) return -1;
 			else if (a == b) return 0;
 			else return 1;
@@ -74,10 +74,11 @@ OperationPtr MathOperationFactory::build(uint8_t opcode, BitStream & bs)
 	return IOperationFactory::build(opcode, bs);
 }
 
-OperationPtr MathOperationFactory::_makeMathExpression(BitStream & bs, function<int64_t(int64_t, int64_t)> mathOperation) const
+OperationPtr MathOperationFactory::_makeMathExpression(BitStream & bs, uint32_t opcodeSize,
+	function<int64_t(int64_t, int64_t)> mathOperation) const
 {
 	auto offset = bs.position();
-	bs.pop(6);
+	bs.pop(opcodeSize);
 
 	auto arg1 = EvmArgument::getArgument(bs);
 	auto arg2 = EvmArgument::getArgument(bs);

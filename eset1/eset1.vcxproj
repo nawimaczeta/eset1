@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
     <ClInclude Include="Argument.h" />
     <ClInclude Include="BitStream.h" />
     <ClInclude Include="common.h" />
@@ -158,6 +159,7 @@
     <ClInclude Include="ThreadContext.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Application.cpp" />
     <ClCompile Include="Argument.cpp" />
     <ClCompile Include="BitStream.cpp" />
     <ClCompile Include="eset1.cpp" />

@@ -35,8 +35,8 @@ namespace Evm {
 		ifs.read(reinterpret_cast<char *>(&evm->header.dataSize), 4);
 		ifs.read(reinterpret_cast<char *>(&evm->header.initialDataSize), 4);
 
-		Bytes newPayload;
-		copy(istream_iterator<Byte>(ifs), istream_iterator<Byte>(), back_inserter(newPayload));
+		Bytes newPayload(evm->fileSize - Evm::Header::SIZE);
+		ifs.read(reinterpret_cast<char *>(newPayload.data()), newPayload.size());
 
 		evm->payload.swap(newPayload);
 
